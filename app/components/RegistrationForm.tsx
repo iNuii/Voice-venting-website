@@ -18,7 +18,103 @@ interface RegistrationFormProps {
   onSuccess: () => void;
 }
 
+type Language = 'th' | 'en';
+
+const translations = {
+  th: {
+    earlyAccess: '✨ รับสิทธิ์เข้าถึงก่อนใครและราคาพิเศษเมื่อเราเปิดตัว!',
+    fullName: 'ชื่อ-นามสกุล',
+    fullNamePlaceholder: 'สมชาย ใจดี',
+    email: 'อีเมล',
+    emailPlaceholder: 'example@email.com',
+    emailHelp: 'เราจะส่งการอัปเดตและการแจ้งเตือนการเปิดตัวมาที่นี่',
+    phone: 'หมายเลขโทรศัพท์',
+    age: 'อายุ',
+    ageHelp: 'ต้องมีอายุ 18 ปีขึ้นไปเพื่อใช้ Voice Venting',
+    occupation: 'อาชีพ',
+    occupationPlaceholder: 'เลือกอาชีพของคุณ...',
+    student: 'นักเรียน/นักศึกษา',
+    employee: 'พนักงานบริษัท (ภาคเอกชน)',
+    government: 'ข้าราชการ',
+    businessOwner: 'เจ้าของธุรกิจ',
+    freelancer: 'ฟรีแลนซ์',
+    healthcare: 'บุคลากรทางการแพทย์',
+    education: 'บุคลากรทางการศึกษา',
+    itTech: 'นักเทคโนโลยี/ไอที',
+    creative: 'นักสร้างสรรค์/ศิลปิน',
+    unemployed: 'ว่างงาน',
+    retired: 'เกษียณ',
+    other: 'อื่นๆ',
+    interests: 'หัวข้อที่คุณสนใจ? (เลือกได้มากกว่า 1 ข้อ)',
+    interestGeneral: 'การสนับสนุนทางอารมณ์ทั่วไป',
+    interestStress: 'ความเครียดและความวิตกกังวล',
+    interestRelationship: 'ปัญหาความสัมพันธ์',
+    interestWorkLife: 'สมดุลชีวิตและการงาน',
+    interestLoneliness: 'ความเหงา',
+    interestOther: 'อื่นๆ',
+    urgency: 'คุณต้องการเริ่มใช้ Voice Venting เมื่อไหร่?',
+    urgencyPlaceholder: 'เลือก...',
+    urgencyAsap: 'เร็วที่สุดเท่าที่จะเป็นไปได้',
+    urgencyWeek: 'ภายใน 1 สัปดาห์',
+    urgencyMonth: 'ภายใน 1 เดือน',
+    urgencyExploring: 'แค่อยากรู้จัก',
+    referral: 'คุณรู้จักเราได้อย่างไร?',
+    referralPlaceholder: 'Facebook, เพื่อน, ค้นหาทาง Google ฯลฯ',
+    submit: 'ลงทะเบียนเข้าร่วม',
+    submitting: 'กำลังลงทะเบียน...',
+    terms: 'การลงทะเบียนหมายถึงคุณยอมรับข้อตกลงการใช้บริการและนโยบายความเป็นส่วนตัวของเรา',
+    successMessage: '🎉 ขอบคุณที่ลงทะเบียนในรายชื่อผู้รอ! เราจะแจ้งเตือนคุณเมื่อเราเปิดตัว',
+    required: '*',
+  },
+  en: {
+    earlyAccess: '✨ Get early access and special launch pricing when we go live!',
+    fullName: 'Full Name',
+    fullNamePlaceholder: 'John Doe',
+    email: 'Email',
+    emailPlaceholder: 'john@example.com',
+    emailHelp: 'We\'ll send you updates and launch notifications here',
+    phone: 'Phone Number',
+    age: 'Age',
+    ageHelp: 'Must be 18 or older to use Voice Venting',
+    occupation: 'Occupation',
+    occupationPlaceholder: 'Select your occupation...',
+    student: 'Student',
+    employee: 'Employee (Private Sector)',
+    government: 'Government Employee',
+    businessOwner: 'Business Owner',
+    freelancer: 'Freelancer',
+    healthcare: 'Healthcare Professional',
+    education: 'Education Professional',
+    itTech: 'IT/Tech Professional',
+    creative: 'Creative/Artist',
+    unemployed: 'Currently Unemployed',
+    retired: 'Retired',
+    other: 'Other',
+    interests: 'What topics interest you? (Select all that apply)',
+    interestGeneral: 'General emotional support',
+    interestStress: 'Stress and anxiety',
+    interestRelationship: 'Relationship issues',
+    interestWorkLife: 'Work/life balance',
+    interestLoneliness: 'Loneliness',
+    interestOther: 'Other',
+    urgency: 'When would you like to start using Voice Venting?',
+    urgencyPlaceholder: 'Select...',
+    urgencyAsap: 'As soon as possible',
+    urgencyWeek: 'Within a week',
+    urgencyMonth: 'Within a month',
+    urgencyExploring: 'Just exploring',
+    referral: 'How did you hear about us?',
+    referralPlaceholder: 'Facebook, Friend, Search, etc.',
+    submit: 'Join the Waitlist',
+    submitting: 'Joining...',
+    terms: 'By joining, you agree to our Terms of Service and Privacy Policy',
+    successMessage: '🎉 Thank you for joining the waitlist! We\'ll notify you when we launch.',
+    required: '*',
+  },
+};
+
 export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
+  const [language, setLanguage] = useState<Language>('th');
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
     email: '',
@@ -34,13 +130,15 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const t = translations[language];
+
   const interestOptions = [
-    'General emotional support',
-    'Stress and anxiety',
-    'Relationship issues',
-    'Work/life balance',
-    'Loneliness',
-    'Other',
+    { value: 'general', label: { th: t.interestGeneral, en: translations.en.interestGeneral } },
+    { value: 'stress', label: { th: t.interestStress, en: translations.en.interestStress } },
+    { value: 'relationship', label: { th: t.interestRelationship, en: translations.en.interestRelationship } },
+    { value: 'worklife', label: { th: t.interestWorkLife, en: translations.en.interestWorkLife } },
+    { value: 'loneliness', label: { th: t.interestLoneliness, en: translations.en.interestLoneliness } },
+    { value: 'other', label: { th: t.interestOther, en: translations.en.interestOther } },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -65,7 +163,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
         throw new Error(data.error || 'Submission failed');
       }
 
-      alert('🎉 Thank you for joining the waitlist! We\'ll notify you when we launch.');
+      alert(t.successMessage);
       onSuccess();
     } catch (err: any) {
       setError(err.message || 'Failed to submit');
@@ -94,6 +192,32 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Language Switcher */}
+      <div className="flex justify-end gap-2">
+        <button
+          type="button"
+          onClick={() => setLanguage('th')}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            language === 'th'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          }`}
+        >
+          ไทย
+        </button>
+        <button
+          type="button"
+          onClick={() => setLanguage('en')}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            language === 'en'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          }`}
+        >
+          EN
+        </button>
+      </div>
+
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
           {error}
@@ -102,14 +226,14 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
 
       <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg">
         <p className="text-sm">
-          ✨ Get early access and special launch pricing when we go live!
+          {t.earlyAccess}
         </p>
       </div>
 
       {/* Full Name */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Full Name *
+          {t.fullName} {t.required}
         </label>
         <input
           type="text"
@@ -117,15 +241,18 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
           value={formData.fullName}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="John Doe"
+          className="w-full px-4 py-2 border border-gray-600 rounded-lg
+             text-gray-800 placeholder:text-gray-400
+             focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder={t.fullNamePlaceholder}
         />
+
       </div>
 
       {/* Email */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Email *
+          {t.email} {t.required}
         </label>
         <input
           type="email"
@@ -133,18 +260,18 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
           value={formData.email}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="john@example.com"
+          className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder={t.emailPlaceholder}
         />
         <p className="text-xs text-gray-500 mt-1">
-          We'll send you updates and launch notifications here
+          {t.emailHelp}
         </p>
       </div>
 
       {/* Phone */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Phone Number *
+          {t.phone} {t.required}
         </label>
         <input
           type="tel"
@@ -152,7 +279,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
           value={formData.phone}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="08X-XXX-XXXX"
         />
       </div>
@@ -160,7 +287,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       {/* Age */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Age *
+          {t.age} {t.required}
         </label>
         <input
           type="number"
@@ -169,57 +296,57 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
           onChange={handleChange}
           required
           min="18"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="25"
         />
         <p className="text-xs text-gray-500 mt-1">
-          Must be 18 or older to use Voice Venting
+          {t.ageHelp}
         </p>
       </div>
 
       {/* Occupation */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Occupation *
+          {t.occupation} {t.required}
         </label>
         <select
           name="occupation"
           value={formData.occupation}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
-          <option value="">Select your occupation...</option>
-          <option value="student">Student</option>
-          <option value="employee">Employee (Private Sector)</option>
-          <option value="government">Government Employee</option>
-          <option value="business-owner">Business Owner</option>
-          <option value="freelancer">Freelancer</option>
-          <option value="healthcare">Healthcare Professional</option>
-          <option value="education">Education Professional</option>
-          <option value="it-tech">IT/Tech Professional</option>
-          <option value="creative">Creative/Artist</option>
-          <option value="unemployed">Currently Unemployed</option>
-          <option value="retired">Retired</option>
-          <option value="other">Other</option>
+          <option value="">{t.occupationPlaceholder}</option>
+          <option value="student">{t.student}</option>
+          <option value="employee">{t.employee}</option>
+          <option value="government">{t.government}</option>
+          <option value="business-owner">{t.businessOwner}</option>
+          <option value="freelancer">{t.freelancer}</option>
+          <option value="healthcare">{t.healthcare}</option>
+          <option value="education">{t.education}</option>
+          <option value="it-tech">{t.itTech}</option>
+          <option value="creative">{t.creative}</option>
+          <option value="unemployed">{t.unemployed}</option>
+          <option value="retired">{t.retired}</option>
+          <option value="other">{t.other}</option>
         </select>
       </div>
 
       {/* Interests */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          What topics interest you? (Select all that apply)
+          {t.interests}
         </label>
         <div className="space-y-2">
           {interestOptions.map((interest) => (
-            <label key={interest} className="flex items-center">
+            <label key={interest.value} className="flex items-center">
               <input
                 type="checkbox"
-                checked={formData.interests.includes(interest)}
-                onChange={() => handleInterestToggle(interest)}
+                checked={formData.interests.includes(interest.value)}
+                onChange={() => handleInterestToggle(interest.value)}
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <span className="ml-2 text-sm text-gray-700">{interest}</span>
+              <span className="ml-2 text-sm text-gray-700">{interest.label[language]}</span>
             </label>
           ))}
         </div>
@@ -228,35 +355,35 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       {/* Urgency */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          When would you like to start using Voice Venting? *
+          {t.urgency} {t.required}
         </label>
         <select
           name="urgency"
           value={formData.urgency}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
-          <option value="">Select...</option>
-          <option value="asap">As soon as possible</option>
-          <option value="week">Within a week</option>
-          <option value="month">Within a month</option>
-          <option value="exploring">Just exploring</option>
+          <option value="">{t.urgencyPlaceholder}</option>
+          <option value="asap">{t.urgencyAsap}</option>
+          <option value="week">{t.urgencyWeek}</option>
+          <option value="month">{t.urgencyMonth}</option>
+          <option value="exploring">{t.urgencyExploring}</option>
         </select>
       </div>
 
       {/* Referral */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          How did you hear about us?
+          {t.referral}
         </label>
         <input
           type="text"
           name="referral"
           value={formData.referral}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Facebook, Friend, Search, etc."
+          className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder={t.referralPlaceholder}
         />
       </div>
 
@@ -266,11 +393,11 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
         disabled={loading}
         className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium text-lg"
       >
-        {loading ? 'Joining...' : 'Join the Waitlist'}
+        {loading ? t.submitting : t.submit}
       </button>
 
       <p className="text-sm text-gray-500 text-center">
-        By joining, you agree to our Terms of Service and Privacy Policy
+        {t.terms}
       </p>
     </form>
   );
