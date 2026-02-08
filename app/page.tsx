@@ -16,7 +16,7 @@ const translations = {
     learnMore: 'เรียนรู้เพิ่มเติม',
     noCommitment: '✨ ไม่มีค่าใช้จ่าย ไม่ผูกพัน แค่ลงทะเบียนเพื่อรับการแจ้งเตือน',
     whyTitle: 'ทำไมต้อง Trusted Space?',
-    anonymous: 'ไม่มีใครรู้จักคุณ',
+    anonymous: 'ตัวตนของคุณจะไม่ถูกเปิดเผย',
     anonymousDesc: 'ไม่ต้องเปิดเผยตัวตน คุยได้โดยไม่กังวล',
     instantConnection: 'เชื่อมต่อทันที',
     instantDesc: 'หาคู่สนทนาได้ภายในไม่กี่วินาที',
@@ -44,7 +44,7 @@ const translations = {
     ctaTitle: 'พร้อมที่จะเริ่มต้นแล้วหรือยัง?',
     ctaSubtitle: 'เข้าร่วมรายชื่อผู้รอและรับราคาพิเศษเมื่อเราเปิดตัว',
     ctaButton: 'ลงทะเบียนตอนนี้',
-    specialPricing: '🎁 ผู้ลงทะเบียนก่อนเปิดตัว รับส่วนลด 50%',
+    specialPricing: '🎁 ผู้ลงทะเบียนก่อนเปิดตัว รับฟรี 10 นาที',
     footer: '© 2026 Trusted Space - พื้นที่ปลอดภัยสำหรับทุกคน',
     footerTagline: 'เพราะทุกคนสมควรได้รับการรับฟัง',
     joinWaitlistModal: 'ลงทะเบียนเข้าร่วมรายชื่อผู้รอ',
@@ -87,7 +87,7 @@ const translations = {
     ctaTitle: 'Ready to Get Started?',
     ctaSubtitle: 'Join the waitlist and get special pricing when we launch',
     ctaButton: 'Sign Up Now',
-    specialPricing: '🎁 Early signups get 50% off',
+    specialPricing: '🎁 Early signups get 10 mins free',
     footer: '© 2026 Trusted Space - A Safe Space for Everyone',
     footerTagline: 'Because everyone deserves to be heard',
     joinWaitlistModal: 'Join the Waitlist',
@@ -281,50 +281,6 @@ export default function Home() {
                 }`}
                 aria-label={`Go to feature ${index + 1}`}
               />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h3 className="text-3xl font-bold text-center text-gray-900 mb-12 drop-shadow-sm">
-            {t.pricing}
-          </h3>
-          <div className="grid md:grid-cols-4 gap-6 max-w-5xl mx-auto">
-            {[
-              { time: '5 min', price: '฿20', best: false },
-              { time: '15 min', price: '฿50', best: false },
-              { time: '30 min', price: '฿90', best: true },
-              { time: '60 min', price: '฿160', best: false },
-            ].map((plan) => (
-              <div
-                key={plan.time}
-                className={`bg-white/85 backdrop-blur-md p-6 rounded-xl border-2 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 ${
-                  plan.best ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200'
-                }`}
-              >
-                {plan.best && (
-                  <div className="text-xs font-semibold text-blue-600 mb-2">
-                    {t.mostPopular}
-                  </div>
-                )}
-                <div className="text-3xl font-bold text-gray-900 mb-1">
-                  {plan.price}
-                </div>
-                <div className="text-gray-600 mb-4">{plan.time}</div>
-                <button
-                  onClick={() => setShowForm(true)}
-                  className={`w-full py-2 rounded-lg font-medium transition-all ${
-                    plan.best
-                      ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {t.getNotified}
-                </button>
-              </div>
             ))}
           </div>
         </div>
