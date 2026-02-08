@@ -28,6 +28,17 @@ export async function POST(request: NextRequest) {
     const sheets = google.sheets({ version: 'v4', auth });
     const spreadsheetId = process.env.GOOGLE_SHEET_ID;
 
+    // ตรวจสอบว่ามี environment variables ครบหรือไม่
+    if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL) {
+      throw new Error('Missing GOOGLE_SERVICE_ACCOUNT_EMAIL environment variable');
+    }
+    if (!process.env.GOOGLE_PRIVATE_KEY) {
+      throw new Error('Missing GOOGLE_PRIVATE_KEY environment variable');
+    }
+    if (!spreadsheetId) {
+      throw new Error('Missing GOOGLE_SHEET_ID environment variable');
+    }
+
     // Prepare row data
     const row = [
       new Date(body.timestamp).toLocaleString('th-TH'),
