@@ -1,5 +1,6 @@
 'use client';
 
+import { youtube } from 'googleapis/build/src/apis/youtube';
 import { useState } from 'react';
 
 interface FormData {
@@ -30,7 +31,7 @@ const translations = {
     emailHelp: 'เราจะส่งการอัปเดตและการแจ้งเตือนการเปิดตัวมาที่นี่',
     phone: 'หมายเลขโทรศัพท์',
     age: 'อายุ',
-    ageHelp: 'ต้องมีอายุ 18 ปีขึ้นไปเพื่อใช้ Voice Venting',
+    ageHelp: 'ต้องมีอายุ 18 ปีขึ้นไปเพื่อใช้ Trusted Space',
     occupation: 'อาชีพ',
     occupationPlaceholder: 'เลือกอาชีพของคุณ...',
     student: 'นักเรียน/นักศึกษา',
@@ -52,14 +53,22 @@ const translations = {
     interestWorkLife: 'สมดุลชีวิตและการงาน',
     interestLoneliness: 'ความเหงา',
     interestOther: 'อื่นๆ',
-    urgency: 'คุณต้องการเริ่มใช้ Voice Venting เมื่อไหร่?',
+    urgency: 'คุณต้องการเริ่มใช้ Trusted Space เมื่อไหร่?',
     urgencyPlaceholder: 'เลือก...',
     urgencyAsap: 'เร็วที่สุดเท่าที่จะเป็นไปได้',
     urgencyWeek: 'ภายใน 1 สัปดาห์',
     urgencyMonth: 'ภายใน 1 เดือน',
     urgencyExploring: 'แค่อยากรู้จัก',
     referral: 'คุณรู้จักเราได้อย่างไร?',
-    referralPlaceholder: 'Facebook, เพื่อน, ค้นหาทาง Google ฯลฯ',
+    referralPlaceholder: 'คุณรู้จักเราได้อย่างไร? Facebook, เพื่อน, ค้นหาทาง Google ฯลฯ',
+    facebook: 'Facebook',
+    youtube: 'YouTube',
+    friend: 'เพื่อน',
+    google: 'ค้นหาทาง Google',
+    website: 'เว็บไซต์',
+    socialMedia: 'โซเชียลมีเดีย',
+    advertisement: 'โฆษณา',
+    otherReferral: 'อื่นๆ',
     submit: 'ลงทะเบียนเข้าร่วม',
     submitting: 'กำลังลงทะเบียน...',
     terms: 'การลงทะเบียนหมายถึงคุณยอมรับข้อตกลงการใช้บริการและนโยบายความเป็นส่วนตัวของเรา',
@@ -75,7 +84,7 @@ const translations = {
     emailHelp: 'We\'ll send you updates and launch notifications here',
     phone: 'Phone Number',
     age: 'Age',
-    ageHelp: 'Must be 18 or older to use Voice Venting',
+    ageHelp: 'Must be 18 or older to use Trusted Space',
     occupation: 'Occupation',
     occupationPlaceholder: 'Select your occupation...',
     student: 'Student',
@@ -97,14 +106,22 @@ const translations = {
     interestWorkLife: 'Work/life balance',
     interestLoneliness: 'Loneliness',
     interestOther: 'Other',
-    urgency: 'When would you like to start using Voice Venting?',
+    urgency: 'When would you like to start using Trusted Space?',
     urgencyPlaceholder: 'Select...',
     urgencyAsap: 'As soon as possible',
     urgencyWeek: 'Within a week',
     urgencyMonth: 'Within a month',
     urgencyExploring: 'Just exploring',
     referral: 'How did you hear about us?',
-    referralPlaceholder: 'Facebook, Friend, Search, etc.',
+    referralPlaceholder: 'How did you hear about us? Facebook, friends, Google search, etc.',
+    facebook: 'Facebook',
+    youtube: 'YouTube',
+    friend: 'Friend',
+    google: 'Google Search',
+    website: 'Website',
+    socialMedia: 'Social Media',
+    advertisement: 'Advertisement',
+    otherReferral: 'Other',
     submit: 'Join the Waitlist',
     submitting: 'Joining...',
     terms: 'By joining, you agree to our Terms of Service and Privacy Policy',
@@ -193,29 +210,31 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Language Switcher */}
-      <div className="flex justify-end gap-2">
-        <button
-          type="button"
-          onClick={() => setLanguage('th')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            language === 'th'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          }`}
-        >
-          ไทย
-        </button>
-        <button
-          type="button"
-          onClick={() => setLanguage('en')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            language === 'en'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          }`}
-        >
-          EN
-        </button>
+      <div className="flex justify-end">
+        <div className="relative inline-flex items-center bg-white/80 backdrop-blur-sm rounded-full p-1 shadow-sm border border-gray-200">
+          <button
+            type="button"
+            onClick={() => setLanguage('en')}
+            className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-300 ${
+              language === 'en'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            EN
+          </button>
+          <button
+            type="button"
+            onClick={() => setLanguage('th')}
+            className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-300 ${
+              language === 'th'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            TH
+          </button>
+        </div>
       </div>
 
       {error && (
@@ -255,17 +274,16 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
           {t.email} {t.required}
         </label>
         <input
-          type="email"
+          type="text"
           name="email"
           value={formData.email}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-600 rounded-lg
+             text-gray-800 placeholder:text-gray-400
+             focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder={t.emailPlaceholder}
         />
-        <p className="text-xs text-gray-500 mt-1">
-          {t.emailHelp}
-        </p>
       </div>
 
       {/* Phone */}
@@ -279,7 +297,9 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
           value={formData.phone}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-600 rounded-lg
+             text-gray-800 placeholder:text-gray-400
+             focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="08X-XXX-XXXX"
         />
       </div>
@@ -296,7 +316,9 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
           onChange={handleChange}
           required
           min="18"
-          className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-600 rounded-lg
+             text-gray-800 placeholder:text-gray-400
+             focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="25"
         />
         <p className="text-xs text-gray-500 mt-1">
@@ -314,7 +336,9 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
           value={formData.occupation}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-4 py-2 border border-gray-600 rounded-lg
+    focus:ring-2 focus:ring-blue-500 focus:border-transparent
+    ${formData.occupation === "" ? "text-gray-400" : "text-gray-800"}`}
         >
           <option value="">{t.occupationPlaceholder}</option>
           <option value="student">{t.student}</option>
@@ -362,7 +386,9 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
           value={formData.urgency}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full px-4 py-2 border border-gray-600 rounded-lg
+    focus:ring-2 focus:ring-blue-500 focus:border-transparent
+    ${formData.urgency === "" ? "text-gray-400" : "text-gray-800"}`}
         >
           <option value="">{t.urgencyPlaceholder}</option>
           <option value="asap">{t.urgencyAsap}</option>
@@ -377,14 +403,25 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           {t.referral}
         </label>
-        <input
-          type="text"
+        <select
           name="referral"
           value={formData.referral}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder={t.referralPlaceholder}
-        />
+          required
+          className={`w-full px-4 py-2 border border-gray-600 rounded-lg
+    focus:ring-2 focus:ring-blue-500 focus:border-transparent
+    ${formData.referral === "" ? "text-gray-400" : "text-gray-800"}`}
+        >
+          <option value="">{t.referralPlaceholder}</option>
+          <option value="Facebook">{t.facebook}</option>
+          <option value="YouTube">{t.youtube}</option>
+          <option value="Friend">{t.friend}</option>
+          <option value="Google Search">{t.google}</option>
+          <option value="Website">{t.website}</option>
+          <option value="Social Media">{t.socialMedia}</option>
+          <option value="Advertisement">{t.advertisement}</option>
+          <option value="other">{t.other}</option>
+        </select>
       </div>
 
       {/* Submit */}
