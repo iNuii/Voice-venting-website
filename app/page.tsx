@@ -53,7 +53,7 @@ const translations = {
     appName: 'Trusted Space',
     joinWaitlist: 'Join Waitlist',
     comingSoon: '🚀 Coming Soon',
-    heroTitle: 'Your trusted safe space',
+    heroTitle: 'Hear • Heal • Hope',
     heroSubtitle: 'Connect with understanding listeners through voice calls. No data stored, no recordings, just talk.',
     getEarlyAccess: 'Get Early Access',
     learnMore: 'Learn More',

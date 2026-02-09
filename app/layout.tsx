@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Trusted Space - Anonymous Voice Support",
+  title: "Trusted Space | Hear • Heal • Hope",
   description: "Get emotional support through anonymous voice calls. Talk to someone who cares, anytime you need it. Safe, private, and instant connection.",
 };
 
