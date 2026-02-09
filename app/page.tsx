@@ -150,8 +150,8 @@ export default function Home() {
       <header className="border-b border-white/30 bg-white/70 backdrop-blur-md sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">💬</span>
+            <div className="flex items-center gap-3">
+              <img src="/logo png.png" alt="Trusted Space Logo" className="h-10 w-10 object-contain" />
               <h1 className="text-xl font-bold text-gray-900">{t.appName}</h1>
             </div>
             <div className="flex items-center gap-4">
