@@ -15,6 +15,10 @@ const translations = {
     getEarlyAccess: 'รับสิทธิ์เข้าถึงก่อนใคร',
     learnMore: 'เรียนรู้เพิ่มเติม',
     noCommitment: '✨ ไม่มีค่าใช้จ่าย ไม่ผูกพัน แค่ลงทะเบียนเพื่อรับการแจ้งเตือน',
+    crisisTitle: 'วิกฤตที่มองข้ามไม่ได้',
+    crisisText1: 'เกือบ 1 ใน 10 คนไทย เสี่ยงต่อโรคซึมเศร้า และมีผู้เสียชีวิตจากการฆ่าตัวตายมากกว่า 5,000 คน ในปี 2567',
+    crisisText2: 'คนส่วนใหญ่ต้องการความช่วยเหลือ แต่ไม่กล้าเปิดปาก เพราะกลัวถูกตีตรา ไม่มีเวลา หรือค่าใช้จ่ายสูง',
+    crisisText3: 'เราเข้าใจ และนั่นคือเหตุผลที่เราสร้าง Trusted Space - พื้นที่ปลอดภัยที่ไม่มีการตัดสิน ไม่เปิดเผยตัวตน และเข้าถึงได้ทันที เมื่อคุณต้องการ',
     whyTitle: 'ทำไมต้อง Trusted Space?',
     anonymous: 'ตัวตนของคุณจะไม่ถูกเปิดเผย',
     anonymousDesc: 'ไม่ต้องเปิดเผยตัวตน คุยได้โดยไม่กังวล',
@@ -58,6 +62,10 @@ const translations = {
     getEarlyAccess: 'Get Early Access',
     learnMore: 'Learn More',
     noCommitment: '✨ No cost, no commitment. Just sign up for notifications.',
+    crisisTitle: 'A Crisis We Can\'t Ignore',
+    crisisText1: 'Nearly 1 in 10 Thais are at risk of depression, with over 5,000 lives lost to suicide in 2024.',
+    crisisText2: 'Most people want help but hesitate due to stigma, time constraints, or cost.',
+    crisisText3: 'We understand. That\'s why we created Trusted Space - a safe place with no judgment, complete anonymity, and instant access when you need it most.',
     whyTitle: 'Why Trusted Space?',
     anonymous: 'Complete Anonymity',
     anonymousDesc: 'No need to reveal your identity. Talk freely.',
@@ -218,6 +226,20 @@ export default function Home() {
           <p className="mt-6 text-sm text-gray-600">
             {t.noCommitment}
           </p>
+        </div>
+      </section>
+
+      {/* Crisis Section */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="bg-gradient-to-br from-blue-50/90 to-purple-50/90 backdrop-blur-md p-8 md:p-12 rounded-2xl shadow-xl border border-white/50">
+          <h3 className="text-3xl font-bold text-gray-900 mb-6 drop-shadow-sm underline">
+            {t.crisisTitle}
+          </h3>
+          <div className="space-y-4 text-gray-700 text-lg leading-relaxed">
+            <p>{t.crisisText1}</p>
+            <p>{t.crisisText2}</p>
+            <p className="font-semibold text-blue-800">{t.crisisText3}</p>
+          </div>
         </div>
       </section>
 
