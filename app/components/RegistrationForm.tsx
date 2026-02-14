@@ -4,6 +4,7 @@ import { youtube } from 'googleapis/build/src/apis/youtube';
 import { useState } from 'react';
 
 interface FormData {
+  userType: 'user' | 'listener';
   fullName: string;
   email: string;
   phone: string;
@@ -13,6 +14,12 @@ interface FormData {
   urgency: string;
   referral: string;
   notifyLaunch: boolean;
+  // Listener-specific fields
+  experience?: string;
+  availability?: string[];
+  languages?: string[];
+  qualifications?: string;
+  motivation?: string;
 }
 
 interface RegistrationFormProps {
@@ -23,7 +30,11 @@ type Language = 'th' | 'en';
 
 const translations = {
   th: {
+    userType: 'ประเภทการลงทะเบียน',
+    user: 'ผู้ใช้งาน (User)',
+    listener: 'ผู้รับฟัง (Listener)',
     earlyAccess: '✨ รับสิทธิ์เข้าถึงก่อนใครและราคาพิเศษเมื่อเราเปิดตัว!',
+    earlyAccessListener: '✨ เข้าร่วมเป็นผู้รับฟังและช่วยเหลือผู้อื่นในชุมชนของเรา!',
     fullName: 'ชื่อ-นามสกุล',
     fullNamePlaceholder: 'สมชาย ใจดี',
     email: 'อีเมล',
@@ -69,6 +80,28 @@ const translations = {
     socialMedia: 'โซเชียลมีเดีย',
     advertisement: 'โฆษณา',
     otherReferral: 'อื่นๆ',
+    // Listener-specific fields
+    experience: 'ประสบการณ์ในการรับฟัง',
+    experiencePlaceholder: 'เลือกประสบการณ์ของคุณ...',
+    experienceNone: 'ไม่มีประสบการณ์ (พร้อมเรียนรู้)',
+    experienceSome: 'มีประสบการณ์บ้าง (1-2 ปี)',
+    experienceModerate: 'ประสบการณ์ปานกลาง (3-5 ปี)',
+    experienceExtensive: 'มีประสบการณ์มาก (5+ ปี)',
+    experienceProfessional: 'มืออาชีพ (นักจิตวิทยา/นักปรึกษา)',
+    availability: 'ช่วงเวลาที่สะดวก (เลือกได้มากกว่า 1 ข้อ)',
+    availabilityMorning: 'เช้า (6:00-12:00)',
+    availabilityAfternoon: 'บ่าย (12:00-18:00)',
+    availabilityEvening: 'เย็น (18:00-22:00)',
+    availabilityNight: 'กลางคืน (22:00-6:00)',
+    availabilityWeekend: 'วันหยุดสุดสัปดาห์',
+    availabilityFlexible: 'เวลายืดหยุ่น',
+    languages: 'ภาษาที่สามารถสื่อสารได้ (เลือกได้มากกว่า 1 ข้อ)',
+    languageThai: 'ไทย',
+    languageEnglish: 'อังกฤษ',
+    qualifications: 'คุณสมบัติ/การฝึกอบรม (ถ้ามี)',
+    qualificationsPlaceholder: 'ระบุวุฒิการศึกษา ใบรับรอง หรือการฝึกอบรมที่เกี่ยวข้อง...',
+    motivation: 'เหตุผลที่ต้องการเป็นผู้รับฟัง',
+    motivationPlaceholder: 'บอกเราว่าทำไมคุณถึงอยากเป็นผู้รับฟังใน Trusted Space...',
     submit: 'ลงทะเบียนเข้าร่วม',
     submitting: 'กำลังลงทะเบียน...',
     terms: 'การลงทะเบียนหมายถึงคุณยอมรับข้อตกลงการใช้บริการและนโยบายความเป็นส่วนตัวของเรา',
@@ -76,7 +109,11 @@ const translations = {
     required: '*',
   },
   en: {
+    userType: 'Registration Type',
+    user: 'User',
+    listener: 'Listener',
     earlyAccess: '✨ Get early access and special launch pricing when we go live!',
+    earlyAccessListener: '✨ Join as a listener and help others in our community!',
     fullName: 'Full Name',
     fullNamePlaceholder: 'John Doe',
     email: 'Email',
@@ -122,6 +159,28 @@ const translations = {
     socialMedia: 'Social Media',
     advertisement: 'Advertisement',
     otherReferral: 'Other',
+    // Listener-specific fields
+    experience: 'Listening Experience',
+    experiencePlaceholder: 'Select your experience level...',
+    experienceNone: 'No experience (willing to learn)',
+    experienceSome: 'Some experience (1-2 years)',
+    experienceModerate: 'Moderate experience (3-5 years)',
+    experienceExtensive: 'Extensive experience (5+ years)',
+    experienceProfessional: 'Professional (psychologist/counselor)',
+    availability: 'Available Time Slots (Select all that apply)',
+    availabilityMorning: 'Morning (6:00-12:00)',
+    availabilityAfternoon: 'Afternoon (12:00-18:00)',
+    availabilityEvening: 'Evening (18:00-22:00)',
+    availabilityNight: 'Night (22:00-6:00)',
+    availabilityWeekend: 'Weekends',
+    availabilityFlexible: 'Flexible',
+    languages: 'Languages You Can Communicate In (Select all that apply)',
+    languageThai: 'Thai',
+    languageEnglish: 'English',
+    qualifications: 'Qualifications/Training (if any)',
+    qualificationsPlaceholder: 'List any relevant degrees, certifications, or training...',
+    motivation: 'Why do you want to be a listener?',
+    motivationPlaceholder: 'Tell us why you want to be a listener on Trusted Space...',
     submit: 'Join the Waitlist',
     submitting: 'Joining...',
     terms: 'By joining, you agree to our Terms of Service and Privacy Policy',
@@ -133,6 +192,7 @@ const translations = {
 export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
   const [language, setLanguage] = useState<Language>('th');
   const [formData, setFormData] = useState<FormData>({
+    userType: 'user',
     fullName: '',
     email: '',
     phone: '',
@@ -142,6 +202,12 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
     urgency: '',
     referral: '',
     notifyLaunch: true,
+    // Listener-specific fields
+    experience: '',
+    availability: [],
+    languages: [],
+    qualifications: '',
+    motivation: '',
   });
 
   const [loading, setLoading] = useState(false);
@@ -164,14 +230,18 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
     setError('');
 
     try {
+      const submissionData = {
+        ...formData,
+        interests: formData.interests.join(', '),
+        availability: formData.availability?.join(', ') || '',
+        languages: formData.languages?.join(', ') || '',
+        timestamp: new Date().toISOString(),
+      };
+
       const response = await fetch('/api/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          interests: formData.interests.join(', '),
-          timestamp: new Date().toISOString(),
-        }),
+        body: JSON.stringify(submissionData),
       });
 
       const data = await response.json();
@@ -207,6 +277,24 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
     });
   };
 
+  const handleAvailabilityToggle = (slot: string) => {
+    setFormData({
+      ...formData,
+      availability: formData.availability?.includes(slot)
+        ? formData.availability.filter((s) => s !== slot)
+        : [...(formData.availability || []), slot],
+    });
+  };
+
+  const handleLanguageToggle = (lang: string) => {
+    setFormData({
+      ...formData,
+      languages: formData.languages?.includes(lang)
+        ? formData.languages.filter((l) => l !== lang)
+        : [...(formData.languages || []), lang],
+    });
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Language Switcher */}
@@ -237,6 +325,39 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
         </div>
       </div>
 
+      {/* User Type Selector */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-3">
+          {t.userType} {t.required}
+        </label>
+        <div className="grid grid-cols-2 gap-4">
+          <button
+            type="button"
+            onClick={() => setFormData({ ...formData, userType: 'user' })}
+            className={`px-6 py-4 rounded-lg border-2 transition-all duration-300 ${
+              formData.userType === 'user'
+                ? 'border-blue-600 bg-blue-50 text-blue-700 font-semibold shadow-md'
+                : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+            }`}
+          >
+            <div className="text-2xl mb-2">👤</div>
+            <div>{t.user}</div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setFormData({ ...formData, userType: 'listener' })}
+            className={`px-6 py-4 rounded-lg border-2 transition-all duration-300 ${
+              formData.userType === 'listener'
+                ? 'border-blue-600 bg-blue-50 text-blue-700 font-semibold shadow-md'
+                : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+            }`}
+          >
+            <div className="text-2xl mb-2">👂</div>
+            <div>{t.listener}</div>
+          </button>
+        </div>
+      </div>
+
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
           {error}
@@ -245,7 +366,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
 
       <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg">
         <p className="text-sm">
-          {t.earlyAccess}
+          {formData.userType === 'user' ? t.earlyAccess : t.earlyAccessListener}
         </p>
       </div>
 
@@ -423,6 +544,119 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
           <option value="other">{t.other}</option>
         </select>
       </div>
+
+      {/* Listener-Specific Fields */}
+      {formData.userType === 'listener' && (
+        <>
+          {/* Experience */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t.experience} {t.required}
+            </label>
+            <select
+              name="experience"
+              value={formData.experience}
+              onChange={handleChange}
+              required
+              className={`w-full px-4 py-2 border border-gray-600 rounded-lg
+    focus:ring-2 focus:ring-blue-500 focus:border-transparent
+    ${formData.experience === "" ? "text-gray-400" : "text-gray-800"}`}
+            >
+              <option value="">{t.experiencePlaceholder}</option>
+              <option value="none">{t.experienceNone}</option>
+              <option value="some">{t.experienceSome}</option>
+              <option value="moderate">{t.experienceModerate}</option>
+              <option value="extensive">{t.experienceExtensive}</option>
+              <option value="professional">{t.experienceProfessional}</option>
+            </select>
+          </div>
+
+          {/* Availability */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t.availability}
+            </label>
+            <div className="space-y-2">
+              {[
+                { value: 'morning', label: t.availabilityMorning },
+                { value: 'afternoon', label: t.availabilityAfternoon },
+                { value: 'evening', label: t.availabilityEvening },
+                { value: 'night', label: t.availabilityNight },
+                { value: 'weekend', label: t.availabilityWeekend },
+                { value: 'flexible', label: t.availabilityFlexible },
+              ].map((slot) => (
+                <label key={slot.value} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={formData.availability?.includes(slot.value) || false}
+                    onChange={() => handleAvailabilityToggle(slot.value)}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">{slot.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Languages */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t.languages} {t.required}
+            </label>
+            <div className="space-y-2">
+              {[
+                { value: 'thai', label: t.languageThai },
+                { value: 'english', label: t.languageEnglish },
+              ].map((lang) => (
+                <label key={lang.value} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={formData.languages?.includes(lang.value) || false}
+                    onChange={() => handleLanguageToggle(lang.value)}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">{lang.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Qualifications */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t.qualifications}
+            </label>
+            <textarea
+              name="qualifications"
+              value={formData.qualifications}
+              onChange={handleChange}
+              rows={3}
+              className="w-full px-4 py-2 border border-gray-600 rounded-lg
+             text-gray-800 placeholder:text-gray-400
+             focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder={t.qualificationsPlaceholder}
+            />
+          </div>
+
+          {/* Motivation */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t.motivation} {t.required}
+            </label>
+            <textarea
+              name="motivation"
+              value={formData.motivation}
+              onChange={handleChange}
+              required
+              rows={4}
+              className="w-full px-4 py-2 border border-gray-600 rounded-lg
+             text-gray-800 placeholder:text-gray-400
+             focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder={t.motivationPlaceholder}
+            />
+          </div>
+        </>
+      )}
 
       {/* Submit */}
       <button

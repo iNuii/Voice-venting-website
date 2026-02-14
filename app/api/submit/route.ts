@@ -6,7 +6,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Validate required fields
-    const required = ['fullName', 'email', 'phone', 'age', 'occupation', 'urgency'];
+    const required = ['userType', 'fullName', 'email', 'phone', 'age', 'occupation', 'urgency'];
+    
+    // Add listener-specific required fields
+    if (body.userType === 'listener') {
+      required.push('experience', 'motivation');
+    }
+    
     for (const field of required) {
       if (!body[field]) {
         return NextResponse.json(
@@ -42,6 +48,7 @@ export async function POST(request: NextRequest) {
     // Prepare row data
     const row = [
       new Date(body.timestamp).toLocaleString('th-TH'),
+      body.userType || 'user',
       body.fullName,
       body.email,
       body.phone,
@@ -50,13 +57,19 @@ export async function POST(request: NextRequest) {
       body.interests || '-',
       body.urgency,
       body.referral || '-',
+      // Listener-specific fields
+      body.experience || '-',
+      body.availability || '-',
+      body.languages || '-',
+      body.qualifications || '-',
+      body.motivation || '-',
       'Waitlist', // Status
     ];
 
     // Append to sheet
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: 'Waitlist!A:J', // Sheet name and range (updated to J for occupation)
+      range: 'Waitlist!A:P', // Updated range to accommodate all fields
       valueInputOption: 'RAW',
       requestBody: {
         values: [row],
